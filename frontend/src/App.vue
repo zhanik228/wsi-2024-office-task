@@ -30,7 +30,7 @@ export default {
 }
 
 .office-img {
-  height: 100vh;
+  height: 98vh;
   display: block;
 }
 </style>
