@@ -26,11 +26,11 @@ export default {
 
 <style scoped>
 .office {
-  margin-left: 260px;
+  margin-left: 280px;
 }
 
 .office-img {
-  width: 1500px;
+  height: 100vh;
   display: block;
 }
 </style>

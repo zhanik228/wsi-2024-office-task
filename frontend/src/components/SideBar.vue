@@ -77,6 +77,7 @@ export default {
     left: 0;
     background-color: rgb(152, 224, 224);
     height: 100%;
+    overflow-y: scroll;
 }
 
 .sidebar__header {
@@ -123,7 +124,6 @@ export default {
 
 .sidebar__footer {
     padding: 20px 10px;
-    overflow: scroll;
 }
 
 .chat-body {
