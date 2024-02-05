@@ -123,6 +123,7 @@ export default {
 
 .sidebar__footer {
     padding: 20px 10px;
+    overflow: scroll;
 }
 
 .chat-body {
