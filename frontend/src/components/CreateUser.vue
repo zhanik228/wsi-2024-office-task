@@ -1,8 +1,8 @@
 <template>
-  <div class="modal">
+  <div v-show="modalOpen" class="modal" @click.stop="$emit('update:modalOpen', false)">
     <div class="modal-content">
       <div class="modal-header">
-        <h2 class="modal-header__title">Create User</h2>
+        <h2 class="modal-header__title">{{ modalMode == 'create' ? 'Create User' : 'Update User'}}</h2>
       </div>
       <div class="modal-body">
         <div class="modal-body__content">
@@ -80,9 +80,19 @@ export default {
       return this.selectedAvatar ? this.selectedAvatar : this.avatars[Math.floor(Math.random() * this.avatars.length)]
     }
   },
+  props: {
+    modalMode: {
+      required: false,
+      type: String,
+    },
+    modalOpen: {
+      required: false,
+      type: Boolean
+    }
+  },
   methods: {
     onContinue() {
-      
+      this.$emit('update:modalOpen', false)
     }
   },
   mounted() {
@@ -92,6 +102,7 @@ export default {
 
 <style scoped>
 .modal {
+  z-index: 100;
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, .7);
