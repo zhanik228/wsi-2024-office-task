@@ -689,11 +689,11 @@ export default {
 <style scoped>
 .svg {
   width: 1400px;
-  height: 97vh;
+  height: 895px;
 }
 .office {
-  width: 1400px;
-  margin-left: 280px;
+  height: 100%;
+  margin-left: 264px;
   overflow-x: scroll;
   position: relative;
 }
@@ -704,7 +704,7 @@ export default {
   width: 170px;
   height: 165px;
   position: absolute;
-  top: 140px;
+  top: 14%;
   left: 330px;
   display: flex;
   align-items: center;
