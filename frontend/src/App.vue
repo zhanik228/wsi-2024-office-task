@@ -635,8 +635,8 @@
     <line class="cls-15" x1="1725.39" y1="45.93" x2="1796.5" y2="45.93"/>
   </g>
 </svg>
-<div v-for="slot in theOfficeSlots.slots" :key="slot" draggable="true" :class="`person-icon`" :style="{top: slot.position.y +'px', left: slot.position.x +'px'}"></div>
-<div class="the-office-zone"></div>
+<div v-for="slot in theOfficeSlots.slots" :id="slot.number" @dragover="handlePersonDragover(slot)" :key="slot" draggable="true" :class="`person-icon`" :style="{top: slot.position.y +'px', left: slot.position.x +'px', background: `url(${slot.img})`}"></div>
+<div class="the-office-zone" @dragover="handleDragZone"></div>
     </div>
   </main>
 </template>
@@ -644,6 +644,8 @@
 <script>
 import CreateUser from "@/components/CreateUser.vue";
 import SideBar from "@/components/SideBar.vue";
+
+import avatar from "@/assets/avatars/avatar-01.svg"
 
 export default {
   components: { CreateUser, SideBar },
@@ -659,25 +661,52 @@ export default {
             {
               number: 1,
               position: {
-                x: 395,
-                y: 133
-              }
+                x: 405,
+                y: 63
+              },
+              userId: true,
+              img: avatar
             },
             {
               number: 2,
               position: {
                 x: 335,
-                y: 233
-              }
+                y: 163
+              },
+              userId: false,
+            },
+            {
+              number: 3,
+              position: {
+                x: 365,
+                y: 183
+              },
+              userId: false,
+            },
+            {
+              number: 4,
+              position: {
+                x: 395,
+                y: 183
+              },
+              userId: false,
             }
           ]
-        }
+        },
       ]
     }
   },
   computed: {
     theOfficeSlots() {
       return this.officeSlots.find(slot => slot.name == 'The office')
+    }
+  },
+  methods: {
+    handleDragZone(e) {
+      console.log(e.target.classList.add())
+    },
+    handlePersonDragover(slot) {
+      console.log(slot)
     }
   },
   mounted() {
@@ -698,22 +727,36 @@ export default {
   position: relative;
 }
 
+@media screen and (max-width: 720px) {
+  .office {
+    margin-left: 0;
+  }
+}
+
 .the-office-zone {
-  border: 1px solid red;
-  background: rgba(0, 0, 0, 0.5);
   width: 170px;
   height: 165px;
   position: absolute;
-  top: 14%;
+  top: 8%;
   left: 330px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all .3s linear;
+  opacity: 0;
 }
 
 .the-office-zone::before {
   content: 'The office zone';
   color: white;
+  position: absolute;
+  bottom: 100%;
+  background: #333;
+}
+
+.the-office-zone:hover {
+  opacity: 1;
+  border: 3px solid green;
 }
 
 .person-icon {
@@ -721,6 +764,15 @@ export default {
   height: 30px;
   background: #333;
   position: absolute;
+  z-index: 99;
+}
+
+.person-icon__occupied {
+  background: red;
+}
+
+.person-icon__free {
+  background: green;
 }
 
 .office-img {

@@ -1,5 +1,12 @@
 <template>
-    <div class="sidebar">
+    <div>
+        <div class="sidebar-toggle" @click="sidebarOpen = !sidebarOpen">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+    <div :class="`sidebar ${sidebarOpen ? 'sidebar_open' : ''}`">
+        <div class="sidebar-arrow" @click="sidebarOpen = !sidebarOpen"><-</div>
         <div class="sidebar__header">
             <div class="avatar-container">
                 <img width="120" height="120" :src="avatar" alt="avatar">
@@ -27,6 +34,7 @@
             </div>
         </div>
     </div>
+    </div>
 </template>
 
 <script>
@@ -35,6 +43,7 @@ import firstAvatar from '@/assets/avatars/avatar-01.svg'
 export default {
     data() {
         return {
+            sidebarOpen: false,
             avatar: firstAvatar,
             sidebar_body: [
                 {
@@ -70,6 +79,26 @@ export default {
     font-weight: 700;
 }
 
+.sidebar-toggle {
+    position: fixed;
+    top: 10px;
+    width: 50px;
+    height: 30px;
+    display: flex;
+    gap: 4px;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 20px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.bar {
+    background: #000;
+    height: 5px;
+    width: 100%;
+}
+
 .sidebar {
     display: flex;
     flex-direction: column;
@@ -78,6 +107,29 @@ export default {
     background-color: rgb(152, 224, 224);
     height: 100%;
     overflow-y: scroll;
+    z-index: 20;
+    transition: all .3s linear;
+}
+
+.sidebar-arrow {
+    position: absolute;
+    border: 1px solid red;
+    right: 10px;
+    cursor: pointer;
+    display: none;
+}
+
+
+@media screen and (max-width: 720px) {
+    .sidebar {
+        left: -100%;
+    }
+    .sidebar-arrow {
+        display: block;
+    }
+}
+.sidebar_open {
+    left: 0;
 }
 
 .sidebar__header {
