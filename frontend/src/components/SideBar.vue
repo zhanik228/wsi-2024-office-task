@@ -105,7 +105,7 @@ export default {
     position: fixed;
     left: 0;
     background-color: rgb(152, 224, 224);
-    height: 100%;
+    height: 100vh;
     overflow-y: scroll;
     z-index: 20;
     transition: all .3s linear;
