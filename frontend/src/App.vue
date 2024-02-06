@@ -689,7 +689,7 @@ export default {
 <style scoped>
 .svg {
   width: 1400px;
-  height: 895px;
+  height: 720px;
 }
 .office {
   height: 100%;
