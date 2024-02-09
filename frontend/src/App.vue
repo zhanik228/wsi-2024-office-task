@@ -1,9 +1,9 @@
 <template>
   <main>
-    <CreateUser :modalMode="modalMode" v-model:modalOpen="isModalOpen" />
-    <SideBar />
+    <CreateUser v-model:modalMode="modalMode" v-model:modalOpen="isModalOpen" />
+    <SideBar v-model:modalOpen="isModalOpen" v-model:modalMode="modalMode" />
     <div class="office">
-<svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3611.57 1661.28">
+      <svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3611.57 1661.28">
   <g id="Stairs">
     <line class="cls-14" x1="2646.08" y1="56.31" x2="2646.08" y2="636.32"/>
     <line class="cls-14" x1="2327.48" y1="56.31" x2="2327.48" y2="636.32"/>
@@ -634,9 +634,9 @@
     <line class="cls-15" x1="1725.39" y1="41.43" x2="1796.5" y2="41.43"/>
     <line class="cls-15" x1="1725.39" y1="45.93" x2="1796.5" y2="45.93"/>
   </g>
-</svg>
-<div v-for="slot in theOfficeSlots.slots" :id="slot.number" @dragover="handlePersonDragover(slot)" :key="slot" draggable="true" :class="`person-icon`" :style="{top: slot.position.y +'px', left: slot.position.x +'px', background: `url(${slot.img})`}"></div>
-<div class="the-office-zone" @dragover="handleDragZone"></div>
+      </svg>
+      <div v-for="slot in columns[0]?.slots" :id="slot.id" @dragover="handlePersonDragover(slot)" :key="slot" draggable="true" :class="`person-icon`" :style="{top: slot.position_y +'px', left: slot.position_x +'px', background: `url(http://127.0.0.1:8000${slot.user?.avatar})`}"></div>
+      <div class="the-office-zone" @dragover="handleDragZone"></div>
     </div>
   </main>
 </template>
@@ -646,6 +646,8 @@ import CreateUser from "@/components/CreateUser.vue";
 import SideBar from "@/components/SideBar.vue";
 
 import avatar from "@/assets/avatars/avatar-01.svg"
+import secondAvatar from '@/assets/avatars/avatar-02.svg'
+import axios from "axios";
 
 export default {
   components: { CreateUser, SideBar },
@@ -654,6 +656,7 @@ export default {
       isInitializeUserOpen: false,
       modalMode: 'create',
       isModalOpen: false,
+      columns: [],
       officeSlots: [
         {
           name: "The office",
@@ -674,6 +677,7 @@ export default {
                 y: 163
               },
               userId: false,
+              img: secondAvatar,
             },
             {
               number: 3,
@@ -682,6 +686,7 @@ export default {
                 y: 183
               },
               userId: false,
+              img: avatar,
             },
             {
               number: 4,
@@ -690,10 +695,43 @@ export default {
                 y: 183
               },
               userId: false,
+              img: avatar,
             }
           ]
         },
-      ]
+      ],
+      localData:  [
+        {
+        "id": 1, 
+        "positions": 
+          [
+            {"x": 405, "y": 63, isAvailable: true},
+            {x: 335, y: 163, isAvailable: true},
+            {x: 365, y: 183, isAvailable: true},
+            {x: 395, y: 183, isAvailable: true}
+          ],
+        "items": [
+          {
+            "id": 72714, 
+            "position": {"x": 405, "y": 63}, 
+            "content": "Edit Video 🎨" 
+          }
+        ]
+        },
+        {
+        "id": 2, 
+        "items": [
+          {"id": 23844, "content": "Record Video!!! 📹" }
+        ]
+        },
+        {
+        "id": 3, 
+        "items": [
+          {"id": 61584, "content": "Planing 👔" }, 
+          {"id": 9019, "content": "Coding 🧑‍💻" }
+        ]
+        }
+  ]
     }
   },
   computed: {
@@ -706,11 +744,26 @@ export default {
       console.log(e.target.classList.add())
     },
     handlePersonDragover(slot) {
-      console.log(slot)
+      console.log(slot, window.event.classList)
+    },
+    async getColumn() {
+
+    },
+    async getColumns() {
+      try {
+        const res = await axios.get('http://127.0.0.1:8000/api/v1/column')
+        this.columns = res.data
+        console.log(res.data[0].slots)
+      } catch (error) {
+        console.error(error)
+      }
     }
   },
   mounted() {
-    // console.log(this.theOfficeSlots.slots)
+    if (!localStorage.getItem('user')) {
+      this.isModalOpen = true
+    }
+    this.getColumns()
   }
 }
 </script>

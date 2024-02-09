@@ -1,6 +1,6 @@
 <template>
-  <div v-show="modalOpen" class="modal" @click.stop="$emit('update:modalOpen', false)">
-    <div class="modal-content">
+  <div v-show="modalOpen" class="modal" @click="$emit('update:modalOpen', false)">
+    <div class="modal-content" @click.stop>
       <div class="modal-header">
         <h2 class="modal-header__title">{{ modalMode == 'create' ? 'Create User' : 'Update User'}}</h2>
       </div>
@@ -10,7 +10,8 @@
             <div class="image-select">
               <img class="selected-avatar" :src="randomAvatar" alt="Selected Avatar">
             </div>
-            <input class="username-input" type="text" placeholder="Username">
+            <input :disabled="modalMode == 'edit'" v-model="username" required class="username-input" type="text" placeholder="Username">
+            <span v-if="error" style="color: red">Username is required</span>
           </div>
           <div>
             <h2 class="avatars-title">You can choose any avatar you want</h2>
@@ -19,7 +20,7 @@
             </div>
           </div>
         </div>
-          <button @click="onContinue" class="btn-continue">Continue</button>
+          <button @click.prevent="onContinue" class="btn-continue">Continue</button>
       </div>
     </div>
   </div>
@@ -46,7 +47,7 @@ import seventeenAvatar from '../assets/avatars/avatar-17.svg'
 import eighteenAvatar from '../assets/avatars/avatar-18.svg'
 import nineteenAvatar from '../assets/avatars/avatar-19.svg'
 
-
+import axios from 'axios'
 
 export default {
   data() {
@@ -72,12 +73,23 @@ export default {
           eighteenAvatar,
           nineteenAvatar
       ],
-      selectedAvatar: null
+      selectedAvatar: null,
+      username: '',
+      error: null,
     }
   },
   computed: {
     randomAvatar() {
-      return this.selectedAvatar ? this.selectedAvatar : this.avatars[Math.floor(Math.random() * this.avatars.length)]
+      return this.selectedAvatar ? this.selectedAvatar : this.selectedAvatar = this.avatars[Math.floor(Math.random() * this.avatars.length)]
+    },
+  },
+  watch: {
+    modalMode(oldVal, newVal) {
+      if (newVal == 'create') {
+        const user = JSON.parse(localStorage.getItem('user'))
+        this.selectedAvatar = `http://127.0.0.1:8000${user.avatar}`
+        this.username = user.username
+      }
     }
   },
   props: {
@@ -91,8 +103,32 @@ export default {
     }
   },
   methods: {
-    onContinue() {
+    async onContinue() {
+      const selectedAvatar = this.selectedAvatar.split('/').pop()
+      
+      if (!this.username) {
+        this.error = 'Username is required'
+      }
+
+      let res
+      if (this.modalMode == 'create') {
+        res = await axios.post('http://127.0.0.1:8000/api/v1/login', {
+          username: this.username,
+          avatar: selectedAvatar
+        })
+        console.log(res)
+        localStorage.setItem('user', JSON.stringify(res.data.user))
+        localStorage.setItem('token', JSON.stringify(res.data.token))
+      } else {
+        const user = JSON.parse(localStorage.getItem('user'))
+        const res = await axios.put(`http://127.0.0.1:8000/api/v1/user/${user.id}`, {
+          avatar: selectedAvatar
+        })
+        localStorage.setItem('user', JSON.stringify(res.data))
+        console.log(res)
+      }
       this.$emit('update:modalOpen', false)
+      location.reload()
     }
   },
   mounted() {
